@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 func main() {
@@ -14,7 +13,7 @@ func main() {
 	dotEnvFileName := args[0]
 	programWithArguments := args[1:]
 
-	cmd := exec.Command(strings.Join(programWithArguments, " "))
+	cmd := exec.Command(programWithArguments[0], programWithArguments[1:]...)
 
 	file, err := os.Open(dotEnvFileName)
 
