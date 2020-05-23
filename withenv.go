@@ -9,17 +9,20 @@ import (
 )
 
 func main() {
+	if len(os.Args) < 2 {
+		log.Fatal("Usage: withenv <dotenv.env> <command> [arguments...]")
+	}
+
 	args := os.Args[1:]
 	dotEnvFileName := args[0]
 	programWithArguments := args[1:]
 
-	cmd := exec.Command(programWithArguments[0], programWithArguments[1:]...)
-
 	file, err := os.Open(dotEnvFileName)
-
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Cannot read env file %s!", dotEnvFileName))
 	}
+
+	cmd := exec.Command(programWithArguments[0], programWithArguments[1:]...)
 
 	var executionEnvironment []string
 	executionEnvironment = append(os.Environ())
@@ -39,6 +42,6 @@ func main() {
 
 	err = cmd.Run()
 	if err != nil {
-		println(err.Error())
+		log.Fatal(err.Error())
 	}
 }
