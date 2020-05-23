@@ -1,8 +1,8 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"os/exec"
@@ -15,7 +15,8 @@ func main() {
 	programWithArguments := args[1:]
 
 	cmd := exec.Command(strings.Join(programWithArguments, " "))
-	envMap, err := godotenv.Read(dotEnvFileName)
+
+	file, err := os.Open(dotEnvFileName)
 
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Cannot read env file %s!", dotEnvFileName))
@@ -24,10 +25,13 @@ func main() {
 	var executionEnvironment []string
 	executionEnvironment = append(os.Environ())
 
-	for key, value := range envMap {
-		environmentVariable := fmt.Sprintf("%s=%s", key, value)
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		environmentVariable := scanner.Text()
 		executionEnvironment = append(executionEnvironment, environmentVariable)
 	}
+
+	_ = file.Close()
 
 	cmd.Env = executionEnvironment
 
